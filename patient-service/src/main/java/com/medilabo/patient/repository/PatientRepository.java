@@ -1,7 +1,7 @@
 package com.medilabo.patient.repository;
 
-import com.medilabo.patient.document.PatientDocument;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.medilabo.patient.entity.PatientEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PatientRepository extends MongoRepository<PatientDocument, String> {
+public interface PatientRepository extends JpaRepository<PatientEntity, String> {
 }

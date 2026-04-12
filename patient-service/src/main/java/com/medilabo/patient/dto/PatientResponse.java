@@ -3,7 +3,7 @@ package com.medilabo.patient.dto;
 import java.time.Instant;
 import java.time.LocalDate;
 
-import com.medilabo.patient.document.Gender;
+import com.medilabo.patient.entity.Gender;
 
 public record PatientResponse(
         String id,
