@@ -1,0 +1,94 @@
+services:
+  gateway-service:
+    build:
+      context: .
+      dockerfile: gateway-service/Dockerfile
+    container_name: gateway-service
+    environment:
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:8081}
+      PATIENT_SERVICE_URL: ${PATIENT_SERVICE_URL:-http://patient-service:8082}
+      NOTE_SERVICE_URL: ${NOTE_SERVICE_URL:-http://note-service:8083}
+      ASSESSMENT_SERVICE_URL: ${ASSESSMENT_SERVICE_URL:-http://assessment-service:8084}
+    depends_on:
+      - auth-service
+      - patient-service
+      - note-service
+      - assessment-service
+    ports:
+      - "8080:8080"
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    container_name: auth-service
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATA_MONGODB_URI: ${AUTH_MONGODB_URI:-mongodb://root:rootpassword@mongo-auth:27017/authdb?authSource=admin}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-120}
+      APP_DEFAULT_ORGANIZER_USERNAME: ${APP_DEFAULT_ORGANIZER_USERNAME:-organizer}
+      APP_DEFAULT_ORGANIZER_PASSWORD: ${APP_DEFAULT_ORGANIZER_PASSWORD:-Organizer123!}
+      APP_DEFAULT_PRACTITIONER_USERNAME: ${APP_DEFAULT_PRACTITIONER_USERNAME:-practitioner}
+      APP_DEFAULT_PRACTITIONER_PASSWORD: ${APP_DEFAULT_PRACTITIONER_PASSWORD:-Practitioner123!}
+    depends_on:
+      - mongo-auth
+
+  patient-service:
+    build:
+      context: .
+      dockerfile: patient-service/Dockerfile
+    container_name: patient-service
+    environment:
+      SERVER_PORT: 8082
+      SPRING_DATA_MONGODB_URI: ${PATIENT_MONGODB_URI:-mongodb://root:rootpassword@mongo-patient:27017/patientdb?authSource=admin}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - mongo-patient
+
+  note-service:
+    build:
+      context: .
+      dockerfile: note-service/Dockerfile
+    container_name: note-service
+    environment:
+      SERVER_PORT: 8083
+      SPRING_DATA_MONGODB_URI: ${NOTE_MONGODB_URI:-mongodb://root:rootpassword@mongo-note:27017/notedb?authSource=admin}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - mongo-note
+
+  assessment-service:
+    build:
+      context: .
+      dockerfile: assessment-service/Dockerfile
+    container_name: assessment-service
+    environment:
+      SERVER_PORT: 8084
+      JWT_SECRET: ${JWT_SECRET}
+      PATIENT_SERVICE_BASE_URL: ${PATIENT_SERVICE_URL:-http://patient-service:8082}
+      NOTE_SERVICE_BASE_URL: ${NOTE_SERVICE_URL:-http://note-service:8083}
+    depends_on:
+      - patient-service
+      - note-service
+
+  mongo-auth:
+    image: mongo:8.0
+    container_name: mongo-auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+
+  mongo-patient:
+    image: mongo:8.0
+    container_name: mongo-patient
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+
+  mongo-note:
+    image: mongo:8.0
+    container_name: mongo-note
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword

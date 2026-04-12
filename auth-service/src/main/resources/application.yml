@@ -1,0 +1,29 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: auth-service
+  data:
+    mongodb:
+      uri: mongodb+srv://medilabo:root@cluster0.pfjuogp.mongodb.net/authdb?retryWrites=true&w=majority&authSource=admin
+      auto-index-creation: true
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:change-me-with-at-least-32-characters}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+
+app:
+  default-organizer:
+    username: ${APP_DEFAULT_ORGANIZER_USERNAME:organizer}
+    password: ${APP_DEFAULT_ORGANIZER_PASSWORD:Organizer123!}
+  default-practitioner:
+    username: ${APP_DEFAULT_PRACTITIONER_USERNAME:practitioner}
+    password: ${APP_DEFAULT_PRACTITIONER_PASSWORD:Practitioner123!}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

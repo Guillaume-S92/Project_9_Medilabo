@@ -1,0 +1,39 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/auth/**
+            - id: patient-service
+              uri: ${PATIENT_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/patients/**
+            - id: note-service
+              uri: ${NOTE_SERVICE_URL:http://localhost:8083}
+              predicates:
+                - Path=/api/notes/**
+            - id: assessment-service
+              uri: ${ASSESSMENT_SERVICE_URL:http://localhost:8084}
+              predicates:
+                - Path=/api/assessments/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: [GET, POST, PUT, DELETE, OPTIONS]
+            allowedHeaders: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
