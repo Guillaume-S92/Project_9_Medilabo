@@ -115,3 +115,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
+    ports:
+        - "3307:3306"
+
