@@ -1,0 +1,240 @@
+<div class="patient-detail-page">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">M</div>
+      <div>
+        <h2>Medilabo</h2>
+        <p>Medical Dashboard</p>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        Tableau de bord
+      </a>
+      <a routerLink="/patients" routerLinkActive="active">
+        Patients
+      </a>
+      <a href="javascript:void(0)">Notes</a>
+      <a href="javascript:void(0)">Assessments</a>
+    </nav>
+
+    <button class="logout-btn" type="button" (click)="logout()">Déconnexion</button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">Dossier patient</span>
+        <h1>{{ pageTitle() }}</h1>
+        <p class="role-line">{{ pageSubtitle() }}</p>
+        <p class="role-line">Connecté en tant que {{ username }} · {{ roles }}</p>
+      </div>
+
+      <div class="header-actions">
+        <a class="secondary-btn link-btn" routerLink="/patients">Retour à la liste</a>
+
+        @if (isOrganizer()) {
+          <button class="primary-btn" type="button" (click)="savePatient()" [disabled]="saving() || loading()">
+            {{ saving() ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
+        }
+      </div>
+    </header>
+
+    <section class="hero-card">
+      <div>
+        <h3>{{ isNew() ? 'Création du dossier' : 'Informations patient' }}</h3>
+        <p>
+          @if (isNew()) {
+            Saisissez les informations principales pour créer un nouveau patient dans la base SQL.
+          } @else {
+            Consultez ou mettez à jour les données principales du patient.
+          }
+        </p>
+      </div>
+
+      @if (!isNew()) {
+        <div class="hero-badge">
+          {{ patientId() }}
+        </div>
+      }
+    </section>
+
+    @if (loading()) {
+      <div class="info-box">Chargement de la fiche patient...</div>
+    }
+
+    @if (pageError()) {
+      <div class="error-box">{{ pageError() }}</div>
+    }
+
+    @if (successMessage()) {
+      <div class="success-box">{{ successMessage() }}</div>
+    }
+
+    @if (!loading()) {
+      <section class="form-card">
+        <div class="form-header">
+          <h3>Informations générales</h3>
+          <p>
+            @if (isOrganizer()) {
+              Vous pouvez modifier ces informations.
+            } @else {
+              Consultation seule pour votre rôle.
+            }
+          </p>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="lastName">Nom</label>
+            <input
+              id="lastName"
+              type="text"
+              [ngModel]="form().lastName"
+              (ngModelChange)="updateField('lastName', $event)"
+              [disabled]="!isOrganizer()"
+            />
+          </div>
+
+          <div class="field">
+            <label for="firstName">Prénom</label>
+            <input
+              id="firstName"
+              type="text"
+              [ngModel]="form().firstName"
+              (ngModelChange)="updateField('firstName', $event)"
+              [disabled]="!isOrganizer()"
+            />
+          </div>
+
+          <div class="field">
+            <label for="birthDate">Date de naissance</label>
+            <input
+              id="birthDate"
+              type="date"
+              [ngModel]="form().birthDate"
+              (ngModelChange)="updateField('birthDate', $event)"
+              [disabled]="!isOrganizer()"
+            />
+          </div>
+
+          <div class="field">
+            <label for="gender">Genre</label>
+            <select
+              id="gender"
+              [ngModel]="form().gender"
+              (ngModelChange)="updateField('gender', $event)"
+              [disabled]="!isOrganizer()"
+            >
+              <option value="M">Homme</option>
+              <option value="F">Femme</option>
+            </select>
+          </div>
+
+          <div class="field field-full">
+            <label for="address">Adresse</label>
+            <input
+              id="address"
+              type="text"
+              [ngModel]="form().address"
+              (ngModelChange)="updateField('address', $event)"
+              [disabled]="!isOrganizer()"
+            />
+          </div>
+
+          <div class="field">
+            <label for="phone">Téléphone</label>
+            <input
+              id="phone"
+              type="text"
+              [ngModel]="form().phone"
+              (ngModelChange)="updateField('phone', $event)"
+              [disabled]="!isOrganizer()"
+            />
+          </div>
+        </div>
+
+        @if (isOrganizer()) {
+          <div class="form-actions">
+            <button class="primary-btn" type="button" (click)="savePatient()" [disabled]="saving()">
+              {{ saving() ? 'Enregistrement...' : 'Enregistrer' }}
+            </button>
+          </div>
+        }
+      </section>
+
+      @if (!isNew() && isPractitioner()) {
+        <section class="notes-card">
+          <div class="notes-header">
+            <div>
+              <h3>Notes cliniques</h3>
+              <p>Historique des observations pour ce patient</p>
+            </div>
+
+            <button class="secondary-btn" type="button" (click)="loadNotes(patientId())">
+              Actualiser les notes
+            </button>
+          </div>
+
+          <div class="note-form">
+            <label for="noteContent">Nouvelle note</label>
+            <textarea
+              id="noteContent"
+              rows="5"
+              placeholder="Saisissez une observation clinique..."
+              [ngModel]="noteContent()"
+              (ngModelChange)="noteContent.set($event)"
+            ></textarea>
+
+            <div class="note-form-actions">
+              <button class="primary-btn" type="button" (click)="addNote()" [disabled]="!canSaveNote()">
+                {{ savingNote() ? 'Ajout...' : 'Ajouter la note' }}
+              </button>
+            </div>
+          </div>
+
+          @if (loadingNotes()) {
+            <div class="info-box">Chargement des notes...</div>
+          }
+
+          @if (notesError()) {
+            <div class="error-box">{{ notesError() }}</div>
+          }
+
+          @if (noteSuccessMessage()) {
+            <div class="success-box">{{ noteSuccessMessage() }}</div>
+          }
+
+          @if (!loadingNotes() && !notesError() && notes().length === 0) {
+            <div class="info-box">Aucune note pour ce patient.</div>
+          }
+
+          @if (!loadingNotes() && notes().length > 0) {
+            <div class="notes-list">
+              @for (note of notes(); track note.id) {
+                <article class="note-item">
+                  <div class="note-meta">
+                    <span class="note-author">{{ note.practitionerUsername }}</span>
+                    <span class="note-date">{{ formatDateTime(note.createdAt) }}</span>
+                  </div>
+
+                  <p class="note-content">{{ note.content }}</p>
+                </article>
+              }
+            </div>
+          }
+        </section>
+      }
+
+      @if (!isNew() && !isPractitioner()) {
+        <section class="notes-card">
+          <div class="info-box">
+            Les notes cliniques sont accessibles uniquement au rôle PRACTITIONER avec votre backend actuel.
+          </div>
+        </section>
+      }
+    }
+  </main>
+</div>

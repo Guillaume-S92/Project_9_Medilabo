@@ -1,0 +1,82 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-badge">M</div>
+      <div>
+        <h1>Medilabo</h1>
+        <p>Suivi patient et évaluation du risque diabétique</p>
+      </div>
+    </div>
+
+    <div class="welcome">
+      <span class="tag">Interface médicale</span>
+      <h2>Connexion sécurisée</h2>
+      <p>
+        Accédez à votre espace pour consulter les patients, les notes cliniques
+        et les évaluations de risque.
+      </p>
+    </div>
+
+    <form class="form" (ngSubmit)="onSubmit()">
+      <label for="username">Identifiant</label>
+      <input
+        id="username"
+        name="username"
+        type="text"
+        placeholder="practitioner ou organizer"
+        [(ngModel)]="username"
+        required
+      />
+
+      <label for="password">Mot de passe</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="••••••••••••"
+        [(ngModel)]="password"
+        required
+      />
+
+      <button class="primary-btn" type="submit" [disabled]="loading">
+        {{ loading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
+
+    @if (errorMessage) {
+      <div class="error-box">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <div class="footer-note">
+      <p>Comptes de test : organizer / Organizer123! ou practitioner / Practitioner123!</p>
+    </div>
+  </div>
+
+  <div class="side-panel">
+    <div class="panel-content">
+      <span class="side-tag">Santé • Sécurité • Microservices</span>
+      <h3>Une plateforme pensée pour le personnel médical</h3>
+      <p>
+        Consultation rapide des patients, historique des notes et calcul du niveau
+        de risque depuis une interface claire et apaisante.
+      </p>
+
+      <div class="features">
+        <div class="feature">
+          <strong>Patients</strong>
+          <span>Accès structuré aux données</span>
+        </div>
+        <div class="feature">
+          <strong>Notes</strong>
+          <span>Suivi clinique centralisé</span>
+        </div>
+        <div class="feature">
+          <strong>Assessment</strong>
+          <span>Vision immédiate du risque</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

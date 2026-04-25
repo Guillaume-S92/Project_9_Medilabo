@@ -1,0 +1,90 @@
+<div class="dashboard-page">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">M</div>
+      <div>
+        <h2>Medilabo</h2>
+        <p>Medical Dashboard</p>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        Tableau de bord
+      </a>
+      <a routerLink="/patients" routerLinkActive="active">
+        Patients
+      </a>
+      <a href="javascript:void(0)">Notes</a>
+      <a href="javascript:void(0)">Assessments</a>
+    </nav>
+
+    <button class="logout-btn" type="button" (click)="logout()">Déconnexion</button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">Vue d’ensemble</span>
+        <h1>Bienvenue {{ username }}</h1>
+        <p class="role-line">Rôle(s) : {{ roles }}</p>
+      </div>
+      <div class="status-chip">Système opérationnel</div>
+    </header>
+
+    <section class="hero-card">
+      <div>
+        <h3>Suivi clinique centralisé</h3>
+        <p>
+          Consultez les patients, ajoutez des notes et visualisez l’évaluation
+          du risque dans une interface claire.
+        </p>
+      </div>
+      <div class="hero-badge">Secure API</div>
+    </section>
+
+    <section class="stats">
+      <article class="stat-card">
+        <span>Patients</span>
+        <strong>{{ patientCount() }}</strong>
+        <p>Dossiers suivis</p>
+      </article>
+
+      <article class="stat-card">
+        <span>Notes</span>
+        <strong>—</strong>
+        <p>À brancher ensuite</p>
+      </article>
+
+      <article class="stat-card">
+        <span>Assessments</span>
+        <strong>—</strong>
+        <p>À brancher ensuite</p>
+      </article>
+    </section>
+
+    <section class="patients-panel">
+      <div class="panel-header">
+        <div>
+          <h3>Page Patients</h3>
+          <p>La liste détaillée est maintenant disponible sur une page dédiée</p>
+        </div>
+        <a class="refresh-btn" routerLink="/patients">Ouvrir la page Patients</a>
+      </div>
+
+      @if (loadingPatients()) {
+        <div class="info-box">Chargement du compteur patients...</div>
+      }
+
+      @if (patientsError()) {
+        <div class="error-box">{{ patientsError() }}</div>
+      }
+
+      @if (!loadingPatients() && !patientsError()) {
+        <div class="info-box">
+          Le tableau détaillé, la recherche et les actions de consultation sont sur la page Patients.
+        </div>
+      }
+    </section>
+  </main>
+</div>

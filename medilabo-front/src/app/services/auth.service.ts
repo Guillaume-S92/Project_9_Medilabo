@@ -62,6 +62,10 @@ export class AuthService {
     return this.getStoredAuth()?.roles ?? [];
   }
 
+  hasRole(role: string): boolean {
+    return this.getRoles().includes(role);
+  }
+
   isLoggedIn(): boolean {
     return !!this.getToken();
   }

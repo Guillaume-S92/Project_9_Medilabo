@@ -89,6 +89,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mongo-auth-data:/data/db
     ports:
       - "27017:27017"
 
@@ -98,6 +100,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mongo-note-data:/data/db
     ports:
       - "27018:27017"
 
@@ -109,6 +113,8 @@ services:
       MYSQL_USER: patient
       MYSQL_PASSWORD: patientpassword
       MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql-patient-data:/var/lib/mysql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword" ]
       interval: 10s
@@ -118,3 +124,7 @@ services:
     ports:
         - "3307:3306"
 
+volumes:
+  mongo-auth-data:
+  mongo-note-data:
+  mysql-patient-data:

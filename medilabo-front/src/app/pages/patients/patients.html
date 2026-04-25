@@ -1,0 +1,131 @@
+<div class="patients-page">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">M</div>
+      <div>
+        <h2>Medilabo</h2>
+        <p>Medical Dashboard</p>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        Tableau de bord
+      </a>
+      <a routerLink="/patients" routerLinkActive="active">
+        Patients
+      </a>
+      <a href="javascript:void(0)">Notes</a>
+      <a href="javascript:void(0)">Assessments</a>
+    </nav>
+
+    <button class="logout-btn" type="button" (click)="logout()">Déconnexion</button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">Gestion des dossiers</span>
+        <h1>Patients</h1>
+        <p class="role-line">Connecté en tant que {{ username }} · {{ roles }}</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="secondary-btn" type="button" (click)="loadPatients()">
+          Actualiser
+        </button>
+
+        @if (isOrganizer()) {
+          <a class="primary-btn link-btn" routerLink="/patients/new">
+            Nouveau patient
+          </a>
+        }
+      </div>
+    </header>
+
+    <section class="hero-card">
+      <div>
+        <h3>Liste centralisée des patients</h3>
+        <p>
+          Recherchez rapidement un dossier, consultez les informations principales
+          et récupérez facilement l’identifiant patient pour les notes et assessments.
+        </p>
+      </div>
+
+      <div class="hero-badge">
+        {{ patientCount() }} patient(s)
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="search-box">
+        <label for="patient-search">Recherche</label>
+        <input
+          id="patient-search"
+          type="text"
+          placeholder="Nom, prénom, date, téléphone, identifiant..."
+          [value]="searchTerm()"
+          (input)="updateSearchTerm($any($event.target).value)"
+        />
+      </div>
+    </section>
+
+    @if (loadingPatients()) {
+      <div class="info-box">Chargement des patients...</div>
+    }
+
+    @if (patientsError()) {
+      <div class="error-box">{{ patientsError() }}</div>
+    }
+
+    @if (!loadingPatients() && !patientsError() && filteredPatients().length === 0) {
+      <div class="info-box">Aucun patient trouvé.</div>
+    }
+
+    @if (!loadingPatients() && !patientsError() && filteredPatients().length > 0) {
+      <section class="table-card">
+        <div class="table-header">
+          <h3>Tableau des patients</h3>
+          <p>{{ filteredPatients().length }} résultat(s)</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="patients-table">
+            <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Date de naissance</th>
+              <th>Genre</th>
+              <th>Adresse</th>
+              <th>Téléphone</th>
+              <th>Identifiant</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (patient of filteredPatients(); track patient.id) {
+                <tr>
+                  <td class="strong-cell">{{ patient.lastName }}</td>
+                  <td>{{ patient.firstName }}</td>
+                  <td>{{ patient.birthDate }}</td>
+                  <td>{{ patient.gender === 'M' ? 'Homme' : 'Femme' }}</td>
+                  <td>{{ patient.address || '—' }}</td>
+                  <td>{{ patient.phone || '—' }}</td>
+                  <td>
+                    <code class="patient-id">{{ patient.id }}</code>
+                  </td>
+                  <td>
+                    <a class="table-action-btn" [routerLink]="['/patients', patient.id]">
+                      Ouvrir
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </main>
+</div>
