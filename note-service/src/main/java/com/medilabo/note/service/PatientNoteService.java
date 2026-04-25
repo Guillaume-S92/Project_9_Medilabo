@@ -18,6 +18,13 @@ public class PatientNoteService {
         this.patientNoteRepository = patientNoteRepository;
     }
 
+    public List<NoteResponse> findAll() {
+        return patientNoteRepository.findAll().stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .map(this::toResponse)
+                .toList();
+    }
+
     public List<NoteResponse> findByPatientId(String patientId) {
         return patientNoteRepository.findByPatientIdOrderByCreatedAtDesc(patientId).stream()
                 .map(this::toResponse)

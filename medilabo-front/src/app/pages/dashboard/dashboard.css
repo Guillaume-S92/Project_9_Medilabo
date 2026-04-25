@@ -200,6 +200,86 @@
   line-height: 1.6;
 }
 
+.refresh-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #0f766e, #0ea5e9);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.error-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #ffe8e8;
+  color: #b42318;
+  border: 1px solid #f3b3b3;
+}
+
+.recent-notes {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recent-note-item {
+  background: #f3f8fa;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.recent-note-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+
+.recent-note-author {
+  font-weight: 700;
+  color: #0e7490;
+}
+
+.recent-note-date {
+  color: #80969f;
+}
+
+.recent-note-content {
+  margin: 0 0 8px;
+  color: #1e3a46;
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+
+.recent-note-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0284c7;
+  text-decoration: none;
+}
+
+.recent-note-link:hover {
+  text-decoration: underline;
+}
+
+.role-line {
+  margin: 8px 0 0;
+  color: #60737c;
+  font-weight: 500;
+}
+
+button.logout-btn {
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
 @media (max-width: 980px) {
   .dashboard-page {
     grid-template-columns: 1fr;

@@ -15,7 +15,7 @@
       <a routerLink="/patients" routerLinkActive="active">
         Patients
       </a>
-      <a href="javascript:void(0)">Notes</a>
+      <a routerLink="/notes" routerLinkActive="active">Notes</a>
       <a href="javascript:void(0)">Assessments</a>
     </nav>
 
@@ -99,6 +99,8 @@
               <th>Genre</th>
               <th>Adresse</th>
               <th>Téléphone</th>
+              <th>Nb notes</th>
+              <th>Dernière note</th>
               <th>Identifiant</th>
               <th>Action</th>
             </tr>
@@ -112,6 +114,20 @@
                   <td>{{ patient.gender === 'M' ? 'Homme' : 'Femme' }}</td>
                   <td>{{ patient.address || '—' }}</td>
                   <td>{{ patient.phone || '—' }}</td>
+                  <td>
+                    @if (isPractitioner()) {
+                      <span class="note-badge">{{ getNoteCount(patient.id) }}</span>
+                    } @else {
+                      <span class="note-badge-na">—</span>
+                    }
+                  </td>
+                  <td>
+                    @if (isPractitioner()) {
+                      {{ getLastNote(patient.id) }}
+                    } @else {
+                      —
+                    }
+                  </td>
                   <td>
                     <code class="patient-id">{{ patient.id }}</code>
                   </td>

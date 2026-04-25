@@ -15,7 +15,9 @@
       <a routerLink="/patients" routerLinkActive="active">
         Patients
       </a>
-      <a href="javascript:void(0)">Notes</a>
+      <a routerLink="/notes" routerLinkActive="active">
+        Notes
+      </a>
       <a href="javascript:void(0)">Assessments</a>
     </nav>
 
@@ -46,14 +48,26 @@
     <section class="stats">
       <article class="stat-card">
         <span>Patients</span>
-        <strong>{{ patientCount() }}</strong>
+        @if (loadingPatients()) {
+          <strong>…</strong>
+        } @else {
+          <strong>{{ patientCount() }}</strong>
+        }
         <p>Dossiers suivis</p>
       </article>
 
       <article class="stat-card">
-        <span>Notes</span>
-        <strong>—</strong>
-        <p>À brancher ensuite</p>
+        <span>Notes cliniques</span>
+        @if (!isPractitioner()) {
+          <strong>—</strong>
+          <p>Rôle PRACTITIONER requis</p>
+        } @else if (loadingNotes()) {
+          <strong>…</strong>
+          <p>Chargement...</p>
+        } @else {
+          <strong>{{ noteCount() }}</strong>
+          <p>Observations enregistrées</p>
+        }
       </article>
 
       <article class="stat-card">
@@ -63,26 +77,38 @@
       </article>
     </section>
 
-    <section class="patients-panel">
-      <div class="panel-header">
-        <div>
-          <h3>Page Patients</h3>
-          <p>La liste détaillée est maintenant disponible sur une page dédiée</p>
+    @if (patientsError()) {
+      <div class="error-box">{{ patientsError() }}</div>
+    }
+
+    <section class="panels">
+      <div class="panel">
+        <h3>Accès rapide</h3>
+        <p>Gérez les dossiers patients et les notes cliniques depuis les pages dédiées.</p>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="refresh-btn" routerLink="/patients">Voir les patients</a>
+          @if (isPractitioner()) {
+            <a class="refresh-btn" routerLink="/notes">Voir les notes</a>
+          }
         </div>
-        <a class="refresh-btn" routerLink="/patients">Ouvrir la page Patients</a>
       </div>
 
-      @if (loadingPatients()) {
-        <div class="info-box">Chargement du compteur patients...</div>
-      }
-
-      @if (patientsError()) {
-        <div class="error-box">{{ patientsError() }}</div>
-      }
-
-      @if (!loadingPatients() && !patientsError()) {
-        <div class="info-box">
-          Le tableau détaillé, la recherche et les actions de consultation sont sur la page Patients.
+      @if (isPractitioner() && recentNotes().length > 0) {
+        <div class="panel">
+          <h3>3 dernières notes</h3>
+          <p>Les observations les plus récentes enregistrées dans le système.</p>
+          <div class="recent-notes">
+            @for (note of recentNotes(); track note.id) {
+              <div class="recent-note-item">
+                <div class="recent-note-meta">
+                  <span class="recent-note-author">{{ note.practitionerUsername }}</span>
+                  <span class="recent-note-date">{{ formatDateTime(note.createdAt) }}</span>
+                </div>
+                <p class="recent-note-content">{{ note.content }}</p>
+                <a [routerLink]="['/patients', note.patientId]" class="recent-note-link">Ouvrir le patient →</a>
+              </div>
+            }
+          </div>
         </div>
       }
     </section>

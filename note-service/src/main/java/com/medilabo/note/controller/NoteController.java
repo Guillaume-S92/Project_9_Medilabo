@@ -21,6 +21,12 @@ public class NoteController {
         this.patientNoteService = patientNoteService;
     }
 
+    @GetMapping
+    @PreAuthorize("hasRole('PRACTITIONER')")
+    public List<NoteResponse> findAll() {
+        return patientNoteService.findAll();
+    }
+
     @GetMapping("/patient/{patientId}")
     @PreAuthorize("hasRole('PRACTITIONER')")
     public List<NoteResponse> findByPatientId(@PathVariable String patientId) {

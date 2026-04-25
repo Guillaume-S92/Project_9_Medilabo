@@ -1,0 +1,85 @@
+<div class="notes-page">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">M</div>
+      <div>
+        <h2>Medilabo</h2>
+        <p>Medical Dashboard</p>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Tableau de bord</a>
+      <a routerLink="/patients" routerLinkActive="active">Patients</a>
+      <a routerLink="/notes" routerLinkActive="active">Notes</a>
+      <a href="javascript:void(0)">Assessments</a>
+    </nav>
+
+    <button class="logout-btn" type="button" (click)="logout()">Déconnexion</button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">Notes cliniques</span>
+        <h1>Toutes les notes</h1>
+        <p class="role-line">Connecté en tant que {{ username }} · {{ roles }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="secondary-btn" type="button" (click)="loadNotes()">Actualiser</button>
+      </div>
+    </header>
+
+    <section class="hero-card">
+      <div>
+        <h3>Historique clinique global</h3>
+        <p>Recherchez par contenu, identifiant patient ou praticien. Cliquez sur un patient pour ouvrir sa fiche.</p>
+      </div>
+      <div class="hero-badge">{{ noteCount() }} note(s)</div>
+    </section>
+
+    <section class="toolbar">
+      <div class="search-box">
+        <label for="note-search">Recherche</label>
+        <input
+          id="note-search"
+          type="text"
+          placeholder="Contenu, ID patient, praticien..."
+          [value]="searchTerm()"
+          (input)="updateSearch($any($event.target).value)"
+        />
+      </div>
+    </section>
+
+    @if (loading()) {
+      <div class="info-box">Chargement des notes...</div>
+    }
+
+    @if (error()) {
+      <div class="error-box">{{ error() }}</div>
+    }
+
+    @if (!loading() && !error() && filteredNotes().length === 0) {
+      <div class="info-box">Aucune note trouvée.</div>
+    }
+
+    @if (!loading() && !error() && filteredNotes().length > 0) {
+      <section class="notes-list">
+        @for (note of filteredNotes(); track note.id) {
+          <article class="note-card">
+            <div class="note-card-header">
+              <div class="note-card-meta">
+                <span class="note-author">{{ note.practitionerUsername }}</span>
+                <span class="note-date">{{ formatDateTime(note.createdAt) }}</span>
+              </div>
+              <a class="note-patient-link" [routerLink]="['/patients', note.patientId]">
+                Patient <code>{{ note.patientId }}</code> →
+              </a>
+            </div>
+            <p class="note-content">{{ note.content }}</p>
+          </article>
+        }
+      </section>
+    }
+  </main>
+</div>

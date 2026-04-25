@@ -3,6 +3,7 @@ import { Login } from './pages/login/login';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { Patients } from './pages/patients/patients';
 import { PatientDetail } from './pages/patient-detail/patient-detail';
+import { Notes } from './pages/notes/notes';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -12,5 +13,6 @@ export const routes: Routes = [
   { path: 'patients', component: Patients, canActivate: [authGuard] },
   { path: 'patients/new', component: PatientDetail, canActivate: [authGuard] },
   { path: 'patients/:id', component: PatientDetail, canActivate: [authGuard] },
+  { path: 'notes', component: Notes, canActivate: [authGuard] },
   { path: '**', redirectTo: 'login' }
 ];
