@@ -68,10 +68,21 @@
           }
         </article>
 
-        <article class="stat-card">
-          <span>Assessments</span>
-          <strong>—</strong>
-          <p>Ouvrez un patient pour l'évaluer</p>
+        <article class="stat-card stat-card--risk">
+          <span>Patients à risque</span>
+          @if (assessmentsLoading()) {
+            <strong>…</strong>
+            <p>Calcul en cours...</p>
+          } @else {
+            <strong>{{ atRiskCount() }}</strong>
+            <p>
+              @if (criticalCount() > 0) {
+                dont <strong class="critical-count">{{ criticalCount() }} critique(s)</strong>
+              } @else {
+                Borderline, In Danger, Early onset
+              }
+            </p>
+          }
         </article>
       }
     </section>

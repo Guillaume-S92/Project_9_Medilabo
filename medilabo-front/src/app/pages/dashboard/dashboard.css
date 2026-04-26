@@ -175,6 +175,20 @@
   color: #6b7f89;
 }
 
+.stat-card--risk {
+  border-left: 4px solid #f59e0b;
+}
+
+.stat-card--risk strong {
+  color: #b45309;
+}
+
+.critical-count {
+  display: inline;
+  font-size: 1rem;
+  color: #dc2626;
+}
+
 .panels {
   margin-top: 24px;
   display: grid;
