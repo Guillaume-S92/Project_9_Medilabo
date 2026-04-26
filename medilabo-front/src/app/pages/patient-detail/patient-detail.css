@@ -137,6 +137,18 @@
   color: #fff;
 }
 
+.danger-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.danger-btn:hover { background: #fecaca; }
+
 .secondary-btn {
   background: #ffffff;
   color: #123;
@@ -327,7 +339,7 @@
 
 .note-meta {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   gap: 16px;
   margin-bottom: 10px;
   flex-wrap: wrap;
@@ -341,7 +353,22 @@
 .note-date {
   color: #60758d;
   font-size: 0.95rem;
+  flex: 1;
 }
+
+.note-delete-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-left: auto;
+}
+.note-delete-btn:hover { background: #fecaca; }
 
 .note-content {
   margin: 0;

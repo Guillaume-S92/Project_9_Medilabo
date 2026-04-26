@@ -15,8 +15,10 @@
       <a routerLink="/patients" routerLinkActive="active">
         Patients
       </a>
-      <a routerLink="/notes" routerLinkActive="active">Notes</a>
-      <a href="javascript:void(0)">Assessments</a>
+      @if (isPractitioner()) {
+        <a routerLink="/notes" routerLinkActive="active">Notes</a>
+        <a href="javascript:void(0)">Assessments</a>
+      }
     </nav>
 
     <button class="logout-btn" type="button" (click)="logout()">Déconnexion</button>
@@ -43,6 +45,12 @@
         @if (isOrganizer()) {
           <button class="primary-btn" type="button" (click)="savePatient()" [disabled]="saving() || loading()">
             {{ saving() ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
+        }
+
+        @if (!isNew() && isOrganizer()) {
+          <button class="danger-btn" type="button" (click)="deletePatient()">
+            Supprimer le patient
           </button>
         }
       </div>
@@ -224,6 +232,7 @@
                   <div class="note-meta">
                     <span class="note-author">{{ note.practitionerUsername }}</span>
                     <span class="note-date">{{ formatDateTime(note.createdAt) }}</span>
+                    <button class="note-delete-btn" type="button" (click)="deleteNote(note.id)">✕</button>
                   </div>
 
                   <p class="note-content">{{ note.content }}</p>
@@ -237,7 +246,7 @@
       @if (!isNew() && !isPractitioner()) {
         <section class="notes-card">
           <div class="info-box">
-            Les notes cliniques sont accessibles uniquement au rôle PRACTITIONER avec votre backend actuel.
+            Les notes cliniques sont accessibles uniquement au rôle PRACTITIONER.
           </div>
         </section>
       }

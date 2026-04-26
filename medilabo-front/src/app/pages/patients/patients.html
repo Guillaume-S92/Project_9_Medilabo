@@ -15,8 +15,10 @@
       <a routerLink="/patients" routerLinkActive="active">
         Patients
       </a>
-      <a routerLink="/notes" routerLinkActive="active">Notes</a>
-      <a href="javascript:void(0)">Assessments</a>
+      @if (isPractitioner()) {
+        <a routerLink="/notes" routerLinkActive="active">Notes</a>
+        <a href="javascript:void(0)">Assessments</a>
+      }
     </nav>
 
     <button class="logout-btn" type="button" (click)="logout()">Déconnexion</button>
@@ -132,9 +134,21 @@
                     <code class="patient-id">{{ patient.id }}</code>
                   </td>
                   <td>
-                    <a class="table-action-btn" [routerLink]="['/patients', patient.id]">
-                      Ouvrir
-                    </a>
+                    <div class="action-cell">
+                      <a class="table-action-btn" [routerLink]="['/patients', patient.id]">
+                        Ouvrir
+                      </a>
+                      @if (isPractitioner()) {
+                        <a class="table-assess-btn" [routerLink]="['/patients', patient.id, 'assessment']">
+                          Assessment
+                        </a>
+                      }
+                      @if (isOrganizer()) {
+                        <button class="table-delete-btn" type="button" (click)="deletePatient(patient)">
+                          Supprimer
+                        </button>
+                      }
+                    </div>
                   </td>
                 </tr>
               }

@@ -44,4 +44,11 @@ public class PatientController {
     public PatientResponse update(@PathVariable String id, @Valid @RequestBody PatientRequest request) {
         return patientService.update(id, request);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public void delete(@PathVariable String id) {
+        patientService.delete(id);
+    }
 }

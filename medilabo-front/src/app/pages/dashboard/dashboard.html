@@ -15,10 +15,10 @@
       <a routerLink="/patients" routerLinkActive="active">
         Patients
       </a>
-      <a routerLink="/notes" routerLinkActive="active">
-        Notes
-      </a>
-      <a href="javascript:void(0)">Assessments</a>
+      @if (isPractitioner()) {
+        <a routerLink="/notes" routerLinkActive="active">Notes</a>
+        <a href="javascript:void(0)">Assessments</a>
+      }
     </nav>
 
     <button class="logout-btn" type="button" (click)="logout()">Déconnexion</button>
@@ -56,25 +56,24 @@
         <p>Dossiers suivis</p>
       </article>
 
-      <article class="stat-card">
-        <span>Notes cliniques</span>
-        @if (!isPractitioner()) {
-          <strong>—</strong>
-          <p>Rôle PRACTITIONER requis</p>
-        } @else if (loadingNotes()) {
-          <strong>…</strong>
-          <p>Chargement...</p>
-        } @else {
-          <strong>{{ noteCount() }}</strong>
-          <p>Observations enregistrées</p>
-        }
-      </article>
+      @if (isPractitioner()) {
+        <article class="stat-card">
+          <span>Notes cliniques</span>
+          @if (loadingNotes()) {
+            <strong>…</strong>
+            <p>Chargement...</p>
+          } @else {
+            <strong>{{ noteCount() }}</strong>
+            <p>Observations enregistrées</p>
+          }
+        </article>
 
-      <article class="stat-card">
-        <span>Assessments</span>
-        <strong>—</strong>
-        <p>À brancher ensuite</p>
-      </article>
+        <article class="stat-card">
+          <span>Assessments</span>
+          <strong>—</strong>
+          <p>Ouvrez un patient pour l'évaluer</p>
+        </article>
+      }
     </section>
 
     @if (patientsError()) {

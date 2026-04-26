@@ -45,8 +45,8 @@ export class Patients implements OnInit {
     return roles.length ? roles.join(', ') : 'Aucun rôle';
   }
 
-  isOrganizer = computed(() => this.authService.hasRole('ORGANIZER'));
-  isPractitioner = computed(() => this.authService.hasRole('PRACTITIONER'));
+  isOrganizer(): boolean { return this.authService.hasRole('ORGANIZER'); }
+  isPractitioner(): boolean { return this.authService.hasRole('PRACTITIONER'); }
 
   filteredPatients = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
@@ -112,5 +112,18 @@ export class Patients implements OnInit {
 
   updateSearchTerm(value: string): void {
     this.searchTerm.set(value);
+  }
+
+  deletePatient(patient: Patient): void {
+    if (!confirm(`Supprimer définitivement le patient "${patient.firstName} ${patient.lastName}" ?`)) return;
+    this.patientService.deletePatient(patient.id).subscribe({
+      next: () => {
+        this.patients.update(list => list.filter(p => p.id !== patient.id));
+        const map = new Map(this.notesMap());
+        map.delete(patient.id);
+        this.notesMap.set(map);
+      },
+      error: () => alert('Impossible de supprimer le patient.')
+    });
   }
 }

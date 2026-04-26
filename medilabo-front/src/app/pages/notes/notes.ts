@@ -65,6 +65,14 @@ export class Notes implements OnInit {
     this.searchTerm.set(value);
   }
 
+  deleteNote(noteId: string): void {
+    if (!confirm('Supprimer cette note définitivement ?')) return;
+    this.noteService.deleteNote(noteId).subscribe({
+      next: () => this.notes.update(list => list.filter(n => n.id !== noteId)),
+      error: () => alert('Impossible de supprimer la note.')
+    });
+  }
+
   formatDateTime(value: string): string {
     if (!value) return '—';
     return new Date(value).toLocaleString('fr-FR');

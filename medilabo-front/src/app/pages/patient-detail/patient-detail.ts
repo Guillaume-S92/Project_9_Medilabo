@@ -83,14 +83,14 @@ export class PatientDetail implements OnInit {
     return roles.length ? roles.join(', ') : 'Aucun rôle';
   }
 
-  isOrganizer = computed(() => this.authService.hasRole('ORGANIZER'));
-  isPractitioner = computed(() => this.authService.hasRole('PRACTITIONER'));
+  isOrganizer(): boolean { return this.authService.hasRole('ORGANIZER'); }
+  isPractitioner(): boolean { return this.authService.hasRole('PRACTITIONER'); }
 
   pageTitle = computed(() => this.isNew() ? 'Nouveau patient' : 'Fiche patient');
 
   pageSubtitle = computed(() =>
     this.isNew()
-      ? 'Création d’un nouveau dossier patient'
+      ? "Création d'un nouveau dossier patient"
       : 'Consultation et mise à jour des informations patient'
   );
 
@@ -224,6 +224,23 @@ export class PatientDetail implements OnInit {
         this.savingNote.set(false);
         this.notesError.set('Impossible d’ajouter la note.');
       }
+    });
+  }
+
+  deletePatient(): void {
+    const id = this.patientId();
+    if (!id || !confirm('Supprimer définitivement ce patient et tous ses dossiers ?')) return;
+    this.patientService.deletePatient(id).subscribe({
+      next: () => this.router.navigate(['/patients']),
+      error: () => alert('Impossible de supprimer le patient.')
+    });
+  }
+
+  deleteNote(noteId: string): void {
+    if (!confirm('Supprimer cette note définitivement ?')) return;
+    this.noteService.deleteNote(noteId).subscribe({
+      next: () => this.notes.update(list => list.filter(n => n.id !== noteId)),
+      error: () => alert('Impossible de supprimer la note.')
     });
   }
 

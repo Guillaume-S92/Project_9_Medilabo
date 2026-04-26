@@ -7,6 +7,8 @@ import com.medilabo.note.document.PatientNoteDocument;
 import com.medilabo.note.dto.NoteRequest;
 import com.medilabo.note.dto.NoteResponse;
 import com.medilabo.note.repository.PatientNoteRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,6 +42,13 @@ public class PatientNoteService {
                 .setCreatedAt(now)
                 .setUpdatedAt(now);
         return toResponse(patientNoteRepository.save(document));
+    }
+
+    public void delete(String id) {
+        if (!patientNoteRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note introuvable");
+        }
+        patientNoteRepository.deleteById(id);
     }
 
     private NoteResponse toResponse(PatientNoteDocument document) {

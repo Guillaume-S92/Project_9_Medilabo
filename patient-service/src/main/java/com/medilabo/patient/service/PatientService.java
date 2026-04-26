@@ -65,6 +65,13 @@ public class PatientService {
         return toResponse(patientRepository.save(existing));
     }
 
+    public void delete(String id) {
+        if (!patientRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient introuvable");
+        }
+        patientRepository.deleteById(id);
+    }
+
     private PatientResponse toResponse(PatientEntity entity) {
         return new PatientResponse(
                 entity.getId(),

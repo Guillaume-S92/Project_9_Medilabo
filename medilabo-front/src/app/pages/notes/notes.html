@@ -72,9 +72,12 @@
                 <span class="note-author">{{ note.practitionerUsername }}</span>
                 <span class="note-date">{{ formatDateTime(note.createdAt) }}</span>
               </div>
-              <a class="note-patient-link" [routerLink]="['/patients', note.patientId]">
-                Patient <code>{{ note.patientId }}</code> →
-              </a>
+              <div class="note-card-actions">
+                <a class="note-patient-link" [routerLink]="['/patients', note.patientId]">
+                  Patient <code>{{ note.patientId }}</code> →
+                </a>
+                <button class="note-delete-btn" type="button" (click)="deleteNote(note.id)">✕ Supprimer</button>
+              </div>
             </div>
             <p class="note-content">{{ note.content }}</p>
           </article>

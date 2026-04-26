@@ -42,7 +42,9 @@ export class Dashboard implements OnInit {
     return r.length ? r.join(', ') : 'Aucun rôle';
   }
 
-  isPractitioner = computed(() => this.authService.hasRole('PRACTITIONER'));
+  isOrganizer(): boolean { return this.authService.hasRole('ORGANIZER'); }
+  isPractitioner(): boolean { return this.authService.hasRole('PRACTITIONER'); }
+
   patientCount = computed(() => this.patients().length);
   noteCount = computed(() => this.notes().length);
   recentNotes = computed(() => this.notes().slice(0, 3));

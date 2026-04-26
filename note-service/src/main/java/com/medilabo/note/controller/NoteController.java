@@ -39,4 +39,11 @@ public class NoteController {
     public NoteResponse create(@Valid @RequestBody NoteRequest request, Authentication authentication) {
         return patientNoteService.create(request, authentication.getName());
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('PRACTITIONER')")
+    public void delete(@PathVariable String id) {
+        patientNoteService.delete(id);
+    }
 }

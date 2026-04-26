@@ -3,14 +3,15 @@
 .notes-page {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 280px 1fr;
-  background: #f4f8fb;
+  grid-template-columns: 250px 1fr;
+  background: #f3f7fb;
+  color: #123;
 }
 
 .sidebar {
-  background: linear-gradient(180deg, #0f172a 0%, #12303a 100%);
-  color: white;
-  padding: 28px 22px;
+  background: linear-gradient(180deg, #071a3a 0%, #0b254b 45%, #08203f 100%);
+  color: #fff;
+  padding: 24px 18px;
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -19,27 +20,36 @@
 .logo-block { display: flex; align-items: center; gap: 14px; }
 
 .logo-icon {
-  width: 52px; height: 52px; border-radius: 16px;
-  display: grid; place-items: center;
-  background: linear-gradient(135deg, #0f766e, #0284c7);
-  font-weight: 700; font-size: 1.3rem;
+  width: 46px; height: 46px; border-radius: 14px;
+  background: linear-gradient(135deg, #14b8d4, #0e7490);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 700;
 }
 
-.logo-block h2 { margin: 0; font-size: 1.2rem; }
-.logo-block p { margin: 4px 0 0; color: rgba(255,255,255,0.72); font-size: 0.9rem; }
+.logo-block h2 { margin: 0; font-size: 1.5rem; }
+.logo-block p { margin: 4px 0 0; color: rgba(255,255,255,0.8); font-size: 0.95rem; }
 
-.menu { display: grid; gap: 8px; }
+.menu { display: flex; flex-direction: column; gap: 10px; }
 .menu a {
-  text-decoration: none; color: rgba(255,255,255,0.82);
-  padding: 12px 14px; border-radius: 14px; transition: 0.2s ease;
+  color: rgba(255,255,255,0.92);
+  text-decoration: none;
+  padding: 14px 12px; border-radius: 14px;
+  transition: 0.2s ease; font-weight: 500;
 }
-.menu a:hover, .menu a.active { background: rgba(255,255,255,0.1); color: white; }
+.menu a:hover { background: rgba(255,255,255,0.08); }
+.menu a.active {
+  background: rgba(255,255,255,0.12);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
 
 .logout-btn {
-  margin-top: auto; border: none; cursor: pointer;
-  text-align: center; padding: 14px 16px; border-radius: 14px;
-  background: rgba(255,255,255,0.1); color: white; font-weight: 600; font-size: 1rem;
+  margin-top: auto;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(19,50,85,0.85); color: #fff;
+  padding: 14px 16px; border-radius: 14px;
+  cursor: pointer; font-weight: 600;
 }
+
 
 .content { padding: 30px; display: flex; flex-direction: column; gap: 24px; }
 
@@ -103,6 +113,8 @@
 .note-author { font-weight: 700; color: #0e7490; font-size: 0.95rem; }
 .note-date { color: #80969f; font-size: 0.88rem; }
 
+.note-card-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
 .note-patient-link {
   font-size: 0.88rem; font-weight: 600; color: #0284c7;
   text-decoration: none; padding: 6px 12px; border-radius: 10px;
@@ -110,6 +122,13 @@
 }
 .note-patient-link:hover { background: #bae6fd; }
 .note-patient-link code { font-family: monospace; font-size: 0.85rem; }
+
+.note-delete-btn {
+  font-size: 0.85rem; font-weight: 700; color: #b91c1c;
+  background: #fee2e2; border: none; padding: 6px 12px;
+  border-radius: 10px; cursor: pointer; transition: background 0.2s;
+}
+.note-delete-btn:hover { background: #fecaca; }
 
 .note-content { margin: 0; color: #1e3a46; line-height: 1.6; font-size: 0.95rem; }
 

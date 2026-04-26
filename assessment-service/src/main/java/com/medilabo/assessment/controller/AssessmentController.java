@@ -17,7 +17,7 @@ public class AssessmentController {
     }
 
     @GetMapping("/patient/{patientId}")
-    @PreAuthorize("hasRole('PRACTITIONER')")
+    @PreAuthorize("hasAnyRole('ORGANIZER', 'PRACTITIONER')")
     public AssessmentResponse assess(@PathVariable String patientId,
                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         return assessmentService.assess(patientId, authorizationHeader);
