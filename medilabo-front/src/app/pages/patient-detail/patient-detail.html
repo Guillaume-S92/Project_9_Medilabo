@@ -34,6 +34,12 @@
       <div class="header-actions">
         <a class="secondary-btn link-btn" routerLink="/patients">Retour à la liste</a>
 
+        @if (!isNew() && isPractitioner()) {
+          <a class="secondary-btn link-btn" [routerLink]="['/patients', patientId(), 'assessment']">
+            Voir l’assessment
+          </a>
+        }
+
         @if (isOrganizer()) {
           <button class="primary-btn" type="button" (click)="savePatient()" [disabled]="saving() || loading()">
             {{ saving() ? 'Enregistrement...' : 'Enregistrer' }}

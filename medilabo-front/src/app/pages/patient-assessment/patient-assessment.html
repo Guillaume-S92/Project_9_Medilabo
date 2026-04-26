@@ -1,0 +1,124 @@
+<div class="assessment-page">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">M</div>
+      <div>
+        <h2>Medilabo</h2>
+        <p>Medical Dashboard</p>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        Tableau de bord
+      </a>
+      <a routerLink="/patients" routerLinkActive="active">
+        Patients
+      </a>
+      <a href="javascript:void(0)">Notes</a>
+      <a class="active" href="javascript:void(0)">Assessments</a>
+    </nav>
+
+    <button class="logout-btn" type="button" (click)="logout()">Déconnexion</button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">Analyse du risque</span>
+        <h1>Assessment patient</h1>
+        <p class="role-line">Connecté en tant que {{ username }} · {{ roles }}</p>
+      </div>
+
+      <div class="header-actions">
+        <a class="secondary-btn link-btn" [routerLink]="['/patients', patientId()]">
+          Retour fiche patient
+        </a>
+
+        <button class="primary-btn" type="button" (click)="loadAssessment(patientId())" [disabled]="loading()">
+          {{ loading() ? 'Actualisation...' : 'Actualiser' }}
+        </button>
+      </div>
+    </header>
+
+    @if (pageError()) {
+      <div class="error-box">{{ pageError() }}</div>
+    }
+
+    @if (loading()) {
+      <div class="info-box">Chargement de l’assessment...</div>
+    }
+
+    @if (!loading() && assessment()) {
+      <section class="hero-card">
+        <div>
+          <h3>{{ assessment()!.patientFirstName }} {{ assessment()!.patientLastName }}</h3>
+          <p>
+            Analyse consolidée à partir du patient, des notes cliniques et des triggers détectés.
+          </p>
+        </div>
+
+        <div class="risk-pill" [class]="riskToneClass()">
+          <span>Niveau de risque</span>
+          <strong>{{ riskLevel() }}</strong>
+        </div>
+      </section>
+
+      <section class="stats">
+        <article class="stat-card">
+          <span>Âge</span>
+          <strong>{{ assessment()!.age }}</strong>
+          <p>Années</p>
+        </article>
+
+        <article class="stat-card">
+          <span>Genre</span>
+          <strong>{{ formatGender(assessment()!.gender) }}</strong>
+          <p>Profil patient</p>
+        </article>
+
+        <article class="stat-card">
+          <span>Notes</span>
+          <strong>{{ assessment()!.noteCount }}</strong>
+          <p>Observations prises en compte</p>
+        </article>
+
+        <article class="stat-card">
+          <span>Triggers</span>
+          <strong>{{ assessment()!.triggerCount }}</strong>
+          <p>Occurrences détectées</p>
+        </article>
+      </section>
+
+      <section class="summary-card">
+        <div class="summary-header">
+          <h3>Interprétation</h3>
+          <div class="mini-badge">{{ assessment()!.patientId }}</div>
+        </div>
+
+        <p class="summary-text">
+          {{ riskDescription() }}
+        </p>
+      </section>
+
+      <section class="triggers-card">
+        <div class="section-header">
+          <h3>Triggers détectés</h3>
+          <span>{{ assessment()!.matchedTriggers.length }} trigger(s) unique(s)</span>
+        </div>
+
+        @if (assessment()!.matchedTriggers.length === 0) {
+          <div class="info-box">Aucun trigger détecté pour ce patient.</div>
+        }
+
+        @if (assessment()!.matchedTriggers.length > 0) {
+          <div class="trigger-list">
+            @for (trigger of assessment()!.matchedTriggers; track trigger) {
+              <span class="trigger-chip">{{ trigger }}</span>
+            }
+          </div>
+        }
+      </section>
+    }
+  </main>
+</div>
