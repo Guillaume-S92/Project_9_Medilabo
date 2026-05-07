@@ -57,6 +57,7 @@ services:
       PATIENT_DB_USERNAME: ${PATIENT_DB_USERNAME}
       PATIENT_DB_PASSWORD: ${PATIENT_DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+      APP_DEMO_DATA_ENABLED: ${APP_DEMO_DATA_ENABLED:-true}
     depends_on:
       mysql-patient:
         condition: service_healthy
@@ -73,6 +74,7 @@ services:
       SERVER_PORT: 8083
       SPRING_DATA_MONGODB_URI: mongodb://root:rootpassword@mongo-note:27017/notedb?authSource=admin
       JWT_SECRET: ${JWT_SECRET}
+      APP_DEMO_DATA_ENABLED: ${APP_DEMO_DATA_ENABLED:-true}
     depends_on:
       - mongo-note
     ports:
