@@ -7,7 +7,7 @@ import { Patient, PatientRequest } from '../models/patient.model';
   providedIn: 'root'
 })
 export class PatientService {
-  private readonly apiUrl = 'http://localhost:8080/api/patients';
+  private readonly apiUrl = '/api/patients';
 
   constructor(private http: HttpClient) {}
 

@@ -7,7 +7,7 @@ import { Assessment } from '../models/assessment.model';
   providedIn: 'root'
 })
 export class AssessmentService {
-  private readonly apiUrl = 'http://localhost:8080/api/assessments';
+  private readonly apiUrl = '/api/assessments';
 
   constructor(private http: HttpClient) {}
 

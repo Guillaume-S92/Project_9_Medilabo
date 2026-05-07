@@ -7,7 +7,7 @@ import { Note, NoteRequest } from '../models/note.model';
   providedIn: 'root'
 })
 export class NoteService {
-  private readonly apiUrl = 'http://localhost:8080/api/notes';
+  private readonly apiUrl = '/api/notes';
 
   constructor(private http: HttpClient) {}
 

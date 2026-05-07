@@ -23,8 +23,9 @@ Dans ce projet, l'application répond à un besoin métier précis : permettre �
 Mon projet est organisé en architecture microservices :
 
 ```text
-[ Client Angular ]
+[ Client Angular dockerisé avec Nginx ]
         |
+        | /api/**
         v
 [ Spring Cloud Gateway ]
         |
@@ -40,7 +41,8 @@ Cette séparation permet d'isoler les responsabilités :
 - `patient-service` gère les informations personnelles des patients ;
 - `note-service` gère les notes médicales ;
 - `assessment-service` calcule le niveau de risque ;
-- `gateway-service` sert de point d'entrée unique pour les appels API.
+- `gateway-service` sert de point d'entrée unique pour les appels API ;
+- `medilabo-front` sert l'application Angular via Nginx.
 
 Cette architecture peut être plus coûteuse qu'une application monolithique si elle est mal utilisée, car elle implique plusieurs services et plusieurs appels réseau. C'est pour cela qu'il faut éviter les échanges inutiles entre services et garder des payloads simples.
 
@@ -56,7 +58,9 @@ Par exemple :
 
 - les données patients sont gérées dans `patient-service` ;
 - les notes médicales sont gérées dans `note-service` ;
-- le calcul du risque est isolé dans `assessment-service`.
+- le calcul du risque est isolé dans `assessment-service` ;
+- l'authentification est isolée dans `auth-service` ;
+- le routage est centralisé dans `gateway-service`.
 
 Cette séparation rend le projet plus lisible et plus maintenable. Un code plus maintenable évite aussi les corrections complexes, les régressions et les traitements mal maîtrisés.
 
@@ -110,7 +114,17 @@ Cela centralise les routes et évite de multiplier les points d'entrée côté f
 
 ---
 
-### 5. Sécurité stateless avec JWT
+### 5. Front Angular dockerisé et servi par Nginx
+
+Le front Angular est construit dans une image Docker avec Node.js, puis servi par Nginx.
+
+Ce choix permet de ne pas lancer un serveur de développement Angular en environnement Docker. Le serveur de développement `ng serve` est pratique en local, mais il n'est pas adapté pour servir l'application dans une version plus proche d'un environnement de livraison.
+
+Avec Nginx, le front sert uniquement des fichiers statiques générés par le build Angular. C'est plus léger et plus adapté à une application livrée via Docker.
+
+---
+
+### 6. Sécurité stateless avec JWT
 
 L'application utilise une authentification stateless basée sur JWT.
 
@@ -120,7 +134,7 @@ Ce choix est cohérent avec une architecture microservices, car les services peu
 
 ---
 
-### 6. Configuration externalisée
+### 7. Configuration externalisée
 
 Les variables sensibles et les paramètres d'environnement sont externalisés via un fichier `.env`.
 
@@ -147,7 +161,9 @@ Les principaux points de vigilance sont :
 - éviter les logs trop verbeux en production ;
 - surveiller le temps de réponse des endpoints ;
 - éviter de lancer tous les services si un seul module doit être testé ;
-- ne pas multiplier les dépendances inutiles.
+- ne pas multiplier les dépendances inutiles ;
+- garder des images Docker raisonnables ;
+- éviter de reconstruire inutilement les images si le code n'a pas changé.
 
 ---
 
@@ -188,9 +204,28 @@ Ce choix permet de gérer plus facilement des documents dont le contenu peut var
 
 Le front Angular consomme uniquement les routes exposées par la gateway.
 
+Dans la version Docker, les appels API sont faits via `/api/**`, puis redirigés par Nginx vers la gateway.
+
 Cela évite de disperser la logique d'appel aux microservices dans l'interface utilisateur.
 
 Le front reste donc plus simple à maintenir.
+
+---
+
+### Docker
+
+Chaque service applicatif est dockerisé :
+
+- `medilabo-front` ;
+- `gateway-service` ;
+- `auth-service` ;
+- `patient-service` ;
+- `note-service` ;
+- `assessment-service`.
+
+Docker Compose permet de lancer l'ensemble de l'application avec une seule commande.
+
+Cela facilite la reproductibilité de l'environnement et limite les erreurs de configuration entre les machines.
 
 ---
 
@@ -224,7 +259,8 @@ Pour aller plus loin, je pourrais ajouter :
 - une réduction de la taille des images Docker ;
 - une analyse des dépendances inutilisées ;
 - un cache ciblé sur certaines données peu modifiées ;
-- des DTO plus spécialisés pour éviter de renvoyer trop de données.
+- des DTO plus spécialisés pour éviter de renvoyer trop de données ;
+- une meilleure stratégie de build Docker pour éviter de reconstruire inutilement tous les modules.
 
 ---
 
@@ -238,6 +274,7 @@ La démarche Green Code se retrouve dans plusieurs choix :
 - éviter de dupliquer les données entre les services ;
 - utiliser une base adaptée au type de données ;
 - centraliser les appels via une gateway ;
+- servir le front Angular avec Nginx plutôt qu'avec un serveur de développement ;
 - externaliser la configuration ;
 - garder des responsabilités séparées entre les microservices.
 

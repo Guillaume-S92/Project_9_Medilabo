@@ -4,6 +4,8 @@ Projet de fin de parcours réalisé en **Java 21 / Spring Boot 3.5.13** avec une
 
 L'application permet de gérer les patients d'une clinique, d'ajouter des notes médicales, puis de calculer un niveau de risque de diabète de type 2 à partir des informations du patient et des termes déclencheurs présents dans ses notes.
 
+L'ensemble de l'application peut être lancé avec Docker Compose : front Angular, gateway, microservices back-end et bases de données.
+
 ---
 
 ## Fonctionnalités livrées
@@ -44,8 +46,9 @@ L'adresse postale et le numéro de téléphone sont optionnels.
 ## Architecture du projet
 
 ```text
-[ Client Angular ]
+[ Client Angular dockerisé avec Nginx ]
         |
+        | /api/**
         v
 [ Spring Cloud Gateway ]
         |
@@ -55,7 +58,8 @@ L'adresse postale et le numéro de téléphone sont optionnels.
         +--> assessment-service -> calcule le risque en appelant patient-service et note-service
 ```
 
-Le front Angular communique avec la gateway.  
+Le front Angular est servi par un conteneur Nginx.  
+Les appels API du front passent par `/api/**`, puis sont redirigés vers la gateway.  
 La gateway redirige ensuite les requêtes vers les microservices concernés.
 
 ---
@@ -81,6 +85,7 @@ La gateway redirige ensuite les requêtes vers les microservices concernés.
 - TypeScript
 - Node.js
 - npm
+- Nginx pour servir le build Angular dans Docker
 
 ### Environnement
 
@@ -99,7 +104,7 @@ Project_9_Medilabo/
 ├── note-service/          # Gestion des notes médicales, MongoDB
 ├── assessment-service/    # Calcul du risque de diabète
 ├── gateway-service/       # Gateway Spring Cloud
-├── medilabo-front/        # Application Angular
+├── medilabo-front/        # Application Angular dockerisée avec Nginx
 │
 ├── docker-compose.yml
 ├── .env.example
@@ -110,7 +115,7 @@ Project_9_Medilabo/
 
 ## Prérequis
 
-### Pour lancer le back-end avec Docker
+### Pour lancer toute l'application avec Docker
 
 Il faut installer :
 
@@ -124,11 +129,11 @@ docker --version
 docker compose version
 ```
 
-Avec Docker, il n'est pas nécessaire d'installer Java, Maven, MySQL ou MongoDB localement pour lancer les services back-end.
+Avec Docker, il n'est pas nécessaire d'installer Java, Maven, MySQL, MongoDB, Node.js ou Angular localement pour lancer l'application complète.
 
 ---
 
-### Pour lancer le front Angular en local
+### Pour lancer le front Angular en local sans Docker
 
 Il faut installer :
 
@@ -160,7 +165,7 @@ ng version
 
 ---
 
-### Pour lancer les services Spring Boot sans Docker
+### Pour lancer les services Spring Boot en local sans Docker
 
 Il faut installer :
 
@@ -210,18 +215,35 @@ PATIENT_DB_USERNAME=patient
 PATIENT_DB_PASSWORD=patientpassword
 ```
 
+Le fichier `.env` ne doit pas être versionné.  
+Le fichier `.env.example` sert uniquement d'exemple pour documenter les variables nécessaires.
+
 Les bases MongoDB utilisées par `auth-service` et `note-service` sont lancées par Docker Compose.
 
 La base MySQL utilisée par `patient-service` est également lancée par Docker Compose.
 
 ---
 
-## Démarrage du back-end avec Docker
+## Démarrage de l'application complète avec Docker
 
 Depuis la racine du projet :
 
 ```bash
 docker compose --env-file .env up --build
+```
+
+Cette commande lance :
+
+- le front Angular ;
+- la gateway ;
+- les microservices back-end ;
+- les bases MongoDB ;
+- la base MySQL.
+
+Le front est accessible sur :
+
+```text
+http://localhost:4200
 ```
 
 La gateway est accessible sur :
@@ -230,9 +252,12 @@ La gateway est accessible sur :
 http://localhost:8080
 ```
 
-Les services exposés sont :
+---
+
+## Ports exposés
 
 ```text
+medilabo-front      -> http://localhost:4200
 gateway-service     -> http://localhost:8080
 auth-service        -> http://localhost:8081
 patient-service     -> http://localhost:8082
@@ -248,6 +273,10 @@ MongoDB notes       -> localhost:27018
 MySQL patients      -> localhost:3307
 ```
 
+---
+
+## Arrêt de l'application
+
 Pour arrêter les conteneurs :
 
 ```bash
@@ -258,66 +287,6 @@ Pour arrêter les conteneurs et supprimer les volumes de données :
 
 ```bash
 docker compose down -v
-```
-
----
-
-## Démarrage du front Angular en local
-
-Le front Angular se trouve dans le dossier `medilabo-front`.
-
-Aller dans le dossier du front :
-
-```bash
-cd medilabo-front
-```
-
-Installer les dépendances :
-
-```bash
-npm install
-```
-
-Lancer l'application :
-
-```bash
-npm start
-```
-
-Le front est ensuite disponible sur :
-
-```text
-http://localhost:4200
-```
-
-Si besoin, il est aussi possible de lancer Angular avec :
-
-```bash
-npx ng serve
-```
-
----
-
-## Ordre de lancement conseillé
-
-Pour tester l'application complète :
-
-1. lancer le back-end et les bases avec Docker Compose ;
-2. lancer le front Angular en local ;
-3. ouvrir le navigateur sur `http://localhost:4200`.
-
-Commandes :
-
-```bash
-docker compose --env-file .env up --build
-```
-
-Puis dans un autre terminal :
-
-```bash
-cd medilabo-front
-npm install
-npm start
 ```
 
 ---
@@ -350,12 +319,33 @@ Le praticien peut :
 
 ---
 
+## Sécurité
+
+Le projet utilise Spring Security avec une authentification stateless basée sur JWT.
+
+- `auth-service` gère l'authentification des utilisateurs.
+- Les mots de passe sont encodés avec BCrypt.
+- Après connexion, un token JWT est généré avec les rôles de l'utilisateur.
+- `patient-service`, `note-service` et `assessment-service` vérifient le JWT avant d'autoriser l'accès aux endpoints protégés.
+- Les rôles fonctionnels utilisés sont `ORGANIZER` et `PRACTITIONER`.
+
+---
+
 ## Flux API conseillé
 
 Les appels API passent par la gateway :
 
 ```text
 http://localhost:8080
+```
+
+Depuis le front dockerisé, les appels passent par des URL relatives :
+
+```text
+/api/auth/**
+/api/patients/**
+/api/notes/**
+/api/assessments/**
 ```
 
 ---
@@ -487,6 +477,44 @@ Anticorps
 
 ---
 
+## Lancer le front Angular en local sans Docker
+
+Le front Angular se trouve dans le dossier `medilabo-front`.
+
+Aller dans le dossier du front :
+
+```bash
+cd medilabo-front
+```
+
+Installer les dépendances :
+
+```bash
+npm install
+```
+
+Lancer l'application :
+
+```bash
+npm start
+```
+
+Le front est ensuite disponible sur :
+
+```text
+http://localhost:4200
+```
+
+Si besoin, il est aussi possible de lancer Angular avec :
+
+```bash
+npx ng serve
+```
+
+Attention : en lancement local, il faut que la gateway soit disponible sur `http://localhost:8080`.
+
+---
+
 ## Lancer les services Spring Boot en local sans Docker
 
 Chaque microservice peut être lancé séparément avec Maven.
@@ -558,10 +586,16 @@ npm test
 
 ## Commandes Docker utiles
 
-Reconstruire et lancer le projet :
+Reconstruire et lancer tout le projet :
 
 ```bash
 docker compose --env-file .env up --build
+```
+
+Lancer en arrière-plan :
+
+```bash
+docker compose --env-file .env up --build -d
 ```
 
 Voir les conteneurs actifs :
@@ -582,6 +616,12 @@ Voir les logs d'un service précis :
 docker compose logs -f patient-service
 ```
 
+Voir les logs du front :
+
+```bash
+docker compose logs -f medilabo-front
+```
+
 Arrêter les conteneurs :
 
 ```bash
@@ -598,8 +638,10 @@ docker compose down -v
 
 ## Remarques importantes
 
-- Le front Angular communique avec la gateway.
-- Les appels API passent par `http://localhost:8080`.
+- Toute l'application peut être lancée avec Docker Compose.
+- Le front Angular est servi par Nginx dans un conteneur Docker.
+- Le front Angular appelle les API via `/api/**`.
+- Les appels `/api/**` sont redirigés vers la gateway.
 - Les microservices ne sont pas appelés directement par le front.
 - Le token JWT doit être envoyé dans le header `Authorization`.
 - Les données patients sont stockées dans MySQL.
