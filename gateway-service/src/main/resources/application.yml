@@ -9,6 +9,30 @@ spring:
       server:
         webflux:
           routes:
+            - id: auth-service-openapi
+              uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/v3/api-docs/auth
+              filters:
+                - RewritePath=/v3/api-docs/auth, /v3/api-docs
+            - id: patient-service-openapi
+              uri: ${PATIENT_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/v3/api-docs/patients
+              filters:
+                - RewritePath=/v3/api-docs/patients, /v3/api-docs
+            - id: note-service-openapi
+              uri: ${NOTE_SERVICE_URL:http://localhost:8083}
+              predicates:
+                - Path=/v3/api-docs/notes
+              filters:
+                - RewritePath=/v3/api-docs/notes, /v3/api-docs
+            - id: assessment-service-openapi
+              uri: ${ASSESSMENT_SERVICE_URL:http://localhost:8084}
+              predicates:
+                - Path=/v3/api-docs/assessments
+              filters:
+                - RewritePath=/v3/api-docs/assessments, /v3/api-docs
             - id: auth-service
               uri: ${AUTH_SERVICE_URL:http://localhost:8081}
               predicates:
@@ -31,6 +55,21 @@ spring:
             allowedOrigins: "*"
             allowedMethods: [GET, POST, PUT, DELETE, OPTIONS]
             allowedHeaders: "*"
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs/gateway
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: Authentication API
+        url: /v3/api-docs/auth
+      - name: Patient API
+        url: /v3/api-docs/patients
+      - name: Note API
+        url: /v3/api-docs/notes
+      - name: Assessment API
+        url: /v3/api-docs/assessments
 
 management:
   endpoints:

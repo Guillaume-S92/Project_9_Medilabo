@@ -6,6 +6,7 @@ import com.medilabo.auth.dto.AuthResponse;
 import com.medilabo.auth.dto.LoginRequest;
 import com.medilabo.auth.dto.MeResponse;
 import com.medilabo.auth.service.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/api/auth/login")
+    @Operation(security = {})
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(request.username(), request.password()));

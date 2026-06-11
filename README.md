@@ -1,6 +1,6 @@
 # Medilabo P9 - Microservices Spring Boot + MySQL + MongoDB
 
-Projet de fin de parcours réalisé en **Java 21 / Spring Boot 3.5.13** avec une architecture **microservices**, une **gateway Spring Cloud Gateway**, une base **MySQL** pour les données patients, des bases **MongoDB** pour l'authentification et les notes médicales, ainsi que **Spring Security + JWT** pour protéger l'accès aux données.
+Projet de fin de parcours réalisé en **Java 21 / Spring Boot 3.5.13** avec une architecture **microservices**, une **gateway Spring Cloud Gateway**, une base **MySQL** pour les données patients, des bases **MongoDB** pour l'authentification et les notes médicales, ainsi que **Spring Security + JWT** pour protéger l'accès aux données. Les contrats REST sont documentés avec **OpenAPI** et consultables avec **Swagger UI**.
 
 L'application permet de gérer les patients d'une clinique, d'ajouter des notes médicales, puis de calculer un niveau de risque de diabète de type 2 à partir des informations du patient et des termes déclencheurs présents dans ses notes.
 
@@ -78,6 +78,7 @@ La gateway redirige ensuite les requêtes vers les microservices concernés.
 - MySQL
 - MongoDB
 - Maven
+- OpenAPI / Swagger UI
 
 ### Front-end
 
@@ -252,6 +253,12 @@ La gateway est accessible sur :
 http://localhost:8080
 ```
 
+La documentation Swagger centralisée est accessible sur :
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
 ---
 
 ## Ports exposés
@@ -328,6 +335,35 @@ Le projet utilise Spring Security avec une authentification stateless basée sur
 - Après connexion, un token JWT est généré avec les rôles de l'utilisateur.
 - `patient-service`, `note-service` et `assessment-service` vérifient le JWT avant d'autoriser l'accès aux endpoints protégés.
 - Les rôles fonctionnels utilisés sont `ORGANIZER` et `PRACTITIONER`.
+
+---
+
+## Documentation OpenAPI et Swagger UI
+
+Chaque microservice génère son propre contrat OpenAPI. La gateway expose une interface Swagger UI centralisée permettant de sélectionner l'API à consulter :
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+Les contrats OpenAPI JSON sont également disponibles via la gateway :
+
+```text
+Authentication API -> http://localhost:8080/v3/api-docs/auth
+Patient API        -> http://localhost:8080/v3/api-docs/patients
+Note API           -> http://localhost:8080/v3/api-docs/notes
+Assessment API     -> http://localhost:8080/v3/api-docs/assessments
+```
+
+Pour tester un endpoint protégé depuis Swagger UI :
+
+1. Exécuter `POST /api/auth/login` dans `Authentication API`.
+2. Copier la valeur du token JWT retourné.
+3. Sélectionner l'API à tester.
+4. Cliquer sur `Authorize` et saisir uniquement le token. Swagger ajoute automatiquement le préfixe `Bearer`.
+5. Exécuter les requêtes protégées depuis l'interface.
+
+Les endpoints de documentation sont publics afin que Swagger UI puisse charger les contrats. Les endpoints métier restent protégés par JWT et par les rôles applicatifs.
 
 ---
 
@@ -644,6 +680,7 @@ docker compose down -v
 - Les appels `/api/**` sont redirigés vers la gateway.
 - Les microservices ne sont pas appelés directement par le front.
 - Le token JWT doit être envoyé dans le header `Authorization`.
+- La documentation centralisée des API est disponible sur `http://localhost:8080/swagger-ui.html`.
 - Les données patients sont stockées dans MySQL.
 - Les notes médicales sont stockées dans MongoDB.
 - Les utilisateurs et rôles sont stockés dans MongoDB.
